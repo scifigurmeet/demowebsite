@@ -1,9 +1,11 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
 import time
 
 # Start the WebDriver and open the HTML page
-driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
+service = Service(executable_path='/usr/local/bin/chromedriver')
+options = webdriver.ChromeOptions()
+driver = webdriver.Chrome(service=service, options=options)
 driver.get("https://scifigurmeet.github.io/demowebsite/")  # Update this with the path to your HTML file
 
 time.sleep(2)  # Adding a delay to see the result
