@@ -1,38 +1,45 @@
+# Name of the GitHub Actions workflow
 name: Selenium Automation Testing and Deployment
 
+# Triggers for when the workflow should run
 on:
-  # Runs on pushes targeting the default branch
+  # Runs when changes are pushed to the default branch (main)
   push:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows manual triggering of the workflow from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Sets permissions for the GitHub token used in deployment
 permissions:
   contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Controls concurrent deployments to avoid conflicts
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "pages"  # Group for concurrency control
+  cancel-in-progress: false  # Don't cancel ongoing deployments
 
+# Define jobs to be executed
 jobs:
+  # Job for running Selenium tests
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Runs on Ubuntu environment
 
+    # Steps to execute within the job
     steps:
+      # Step to checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # Step to set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.12" # Change to your Python version
+          python-version: "3.12"  # Version of Python to set up
 
+      # Step to install Chrome WebDriver for Selenium
       - name: Install Chrome WebDriver
         run: |
           LATEST=$(wget -q -O - https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE)
@@ -42,14 +49,17 @@ jobs:
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
+      # Step to install Selenium library
       - name: Install Selenium
         run: pip install selenium
 
+      # Step to execute Selenium tests
       - name: Run Selenium tests
         run: python selenium_test.py
 
+      # Step to save screenshots if tests succeed
       - name: Save screenshot to repository
-        if: ${{ success() }}
+        if: ${{ success() }}  # Condition to run only if tests succeed
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
@@ -57,23 +67,36 @@ jobs:
           git commit -m "Add screenshot taken during Selenium test"
           git push
 
-  # Single deploy job since we're just deploying
+  # Job for deploying to GitHub Pages
   deploy:
+    # Depends on completion of the 'test' job
     needs: test
+
+    # Define the environment for deployment
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages  # Name of the deployment environment
+      url: ${{ steps.deployment.outputs.page_url }}  # URL for deployed GitHub Pages
+
+    # Runs the job on Ubuntu environment
     runs-on: ubuntu-latest
+
+    # Steps to execute within the deployment job
     steps:
+      # Step to checkout the repository code
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Step to configure GitHub Pages deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Step to upload the entire repository as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: "."
+          path: "."  # Uploads the entire repository
+
+      # Step to deploy the repository to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
