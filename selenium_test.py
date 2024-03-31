@@ -5,6 +5,8 @@ import time
 # Start the WebDriver and open the HTML page
 service = Service(executable_path='/usr/local/bin/chromedriver')
 options = webdriver.ChromeOptions()
+options.add_argument("--headless")
+options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(service=service, options=options)
 driver.get("https://scifigurmeet.github.io/demowebsite/")  # Update this with the path to your HTML file
 
