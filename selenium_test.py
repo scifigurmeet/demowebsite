@@ -13,7 +13,7 @@ driver.get("https://scifigurmeet.github.io/demowebsite/")  # Update this with th
 time.sleep(2)  # Adding a delay to see the result
 
 # Assert some condition to verify the result
-assert "My Awesome Website" in driver.title
+assert "My Awesome WebsiteX" in driver.title
 
 # Close the WebDriver
 driver.close()
