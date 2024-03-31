@@ -19,7 +19,11 @@ section {
   margin-bottom: 30px;
 }
 
-h1, h2 {
+h1 {
+  color: #fff;
+}
+
+h2 {
   color: #333;
 }
 
