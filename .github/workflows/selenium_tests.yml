@@ -1,0 +1,30 @@
+name: Selenium Tests
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12' # Change to your Python version
+
+    - name: Install Chrome WebDriver
+      run: |
+        LATEST=$(wget -q -O - https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        wget https://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+
+    - name: Install Selenium
+      run: pip install selenium
+
+    - name: Run Selenium tests
+      run: python selenium_test.py
